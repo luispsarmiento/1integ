@@ -1,4 +1,4 @@
-using One1Integ.Server.Entities;
+using OneInteg.Server.Entities;
 
 namespace OneInteg.Server.Domain;
 
