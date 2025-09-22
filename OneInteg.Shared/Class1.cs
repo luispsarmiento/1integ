@@ -1,4 +1,4 @@
-﻿namespace _1Integ.Shared;
+﻿namespace OneInteg.Shared;
 
 public class Class1
 {

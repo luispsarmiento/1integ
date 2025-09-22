@@ -1,6 +1,6 @@
-using _1Integ.Server.Entities;
+using One1Integ.Server.Entities;
 
-namespace _1Integ.Server.Domain;
+namespace OneInteg.Server.Domain;
 
 public interface IPaymentProvider
 {

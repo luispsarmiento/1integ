@@ -1,0 +1,6 @@
+@OneInteg.Server_HostAddress = http://localhost:5192
+
+GET {{OneInteg.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

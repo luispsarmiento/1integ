@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>_1Integ.Server</RootNamespace>
+    <RootNamespace>OneInteg.Server</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\1Integ.Client\1Integ.Client.csproj" />
-    <ProjectReference Include="..\1Integ.Shared\1Integ.Shared.csproj" />
+    <ProjectReference Include="..\OneInteg.Client\OneInteg.Client.csproj" />
+    <ProjectReference Include="..\OneInteg.Shared\OneInteg.Shared.csproj" />
   </ItemGroup>
 
 </Project>

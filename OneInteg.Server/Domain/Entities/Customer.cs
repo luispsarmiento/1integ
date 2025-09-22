@@ -1,4 +1,4 @@
-namespace _1Integ.Server.Entities;
+namespace OneInteg.Server.Entities;
 
 public class Customer
 {
