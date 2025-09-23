@@ -1,4 +1,4 @@
-namespace OneInteg.Server.Entities;
+namespace OneInteg.Server.Domain.Entities;
 
 public class Customer
 {

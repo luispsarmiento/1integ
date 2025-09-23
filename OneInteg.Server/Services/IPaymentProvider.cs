@@ -1,10 +1,10 @@
-using OneInteg.Server.Entities;
+using OneInteg.Server.Domain.Entities;
 
-namespace OneInteg.Server.Domain;
+namespace OneInteg.Server.Services;
 
 public interface IPaymentProvider
 {
     public Task<Subscription?> HandleSubscription(Subscription data);
-    public Task<Subscription> CreateSubscription(Subscription data);
+    public Task<Subscription> CreateSubscription(Customer customer, Subscription data);
     public Task<Subscription> GetSubscription(Subscription data);
 }

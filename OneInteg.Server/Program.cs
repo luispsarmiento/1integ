@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using OneInteg.Server.IoCConfig;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +10,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddCustomMongoDbService();
 
 var app = builder.Build();
 
@@ -34,7 +39,21 @@ app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 
+
+RouteGroupBuilder api = app.MapGroup("/api/v1");
+api.MapPost("/subscription/checkout-url", CheckoutUrl);
+
 app.Run();
+
+static async Task<IResult> CheckoutUrl([FromQuery(Name = "t_id")] Guid? tenantId)
+{
+    if (!tenantId.HasValue)
+    {
+        return TypedResults.BadRequest();
+    }
+
+    return TypedResults.Ok(new { tId = tenantId });
+}
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
