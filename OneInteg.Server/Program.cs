@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using OneInteg.Server.Domain.Repositories;
@@ -50,6 +51,10 @@ app.MapFallbackToFile("index.html");
 RouteGroupBuilder link = app.MapGroup("/link");
 link.MapGet("/subscription/checkout-url", CheckoutUrl);
 
+RouteGroupBuilder backUrl = app.MapGroup("/back-url");
+
+backUrl.MapGet("/subscription/mp", BackUrlSubscriptionMP);
+
 app.Run();
 
 
@@ -86,6 +91,15 @@ static async Task<IResult> CheckoutUrl(
     }
 
     return Results.Redirect(subscriptionLink);
+}
+
+static async Task<IResult> BackUrlSubscriptionMP(HttpContext contex)
+{
+    var queryParams = contex.Request.Query;
+    var preapprolvaId = queryParams["preapproval_id"];
+    Console.WriteLine(queryParams.ToString());
+
+    return TypedResults.Ok();
 }
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

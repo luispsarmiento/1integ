@@ -1,4 +1,6 @@
-﻿using OneInteg.Server.DataAccess;
+﻿using MongoDB.Bson.IO;
+using MongoDB.Bson;
+using OneInteg.Server.DataAccess;
 using OneInteg.Server.Domain.Repositories;
 using OneInteg.Server.Domain.Services;
 using System.Net.Mail;
@@ -11,10 +13,12 @@ namespace OneInteg.Server.Services
         protected readonly ISubscriptionRepository repository;
 
         protected readonly ICustomerRepository customerRepository;
-        public SubscriptionService(ISubscriptionRepository repository, ICustomerRepository customerRepository) : base(repository)
+        protected readonly IPlanRepository planRepository;
+        public SubscriptionService(ISubscriptionRepository repository, ICustomerRepository customerRepository, IPlanRepository planRepository) : base(repository)
         {
             this.repository = repository;
             this.customerRepository = customerRepository;
+            this.planRepository = planRepository;
         }
 
         public async Task<string> GetCheckoutUrl(Customer customer, string planReference)
@@ -26,7 +30,8 @@ namespace OneInteg.Server.Services
                     return string.Empty;
                 }
 
-                var _customer = (await customerRepository.Find(doc => doc.Email == customer.Email)).FirstOrDefault();
+                var _customer = (await customerRepository.Find(doc => doc.Email == customer.Email &&
+                                                                      doc.TenantId == customer.TenantId)).FirstOrDefault();
 
                 if (_customer == null) 
                 {
@@ -36,12 +41,15 @@ namespace OneInteg.Server.Services
                     await customerRepository.Add(customer);
                 }
 
-                var checkoutUrl = planReference switch
+                var plan = (await planRepository.Find(doc => doc.PlanReference == planReference &&
+                                                             doc.TenantId == customer.TenantId)).FirstOrDefault();
+
+                if (plan == null || (plan.Data is null))
                 {
-                    "test" => "https://www.mercadopago.com.mx/subscriptions/checkout?preapproval_plan_id=a9251f2f03d74de9bdbeeb1d811d1bf7",
-                    "68d48ce89097c6a994042c0b" => "",
-                    _ => ""
-                };
+                    return string.Empty;
+                }
+                dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(plan.Data);
+                var checkoutUrl = Convert.ToString(data.init_point);
 
                 return checkoutUrl;
             }

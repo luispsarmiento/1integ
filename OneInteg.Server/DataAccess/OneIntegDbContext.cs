@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MongoDB.EntityFrameworkCore.Extensions;
 using OneInteg.Server.Domain.Entities;
+using System.Text.Json;
 
 namespace OneInteg.Server.DataAccess
 {
@@ -11,6 +12,7 @@ namespace OneInteg.Server.DataAccess
         public DbSet<Tenant> Tenant { get; init; }
         public DbSet<Customer> Customer { get; init; }
         public DbSet<Subscription> Subscription { get; init; }
+        public DbSet<Plan> Plan { get; init; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,6 +21,7 @@ namespace OneInteg.Server.DataAccess
             modelBuilder.Entity<Tenant>().ToCollection("tenant");
             modelBuilder.Entity<Customer>().ToCollection("customer");
             modelBuilder.Entity<Subscription>().ToCollection("subscription");
+            modelBuilder.Entity<Plan>().ToCollection("plan");
         }
     }
 }
