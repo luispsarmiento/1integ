@@ -1,5 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
+using OneInteg.Server.Domain.Repositories;
+using OneInteg.Server.Domain.Services;
 using OneInteg.Server.IoCConfig;
+using System.Net.Mail;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +17,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddCustomMongoDbService();
+
+builder.Services.AddServiceAndRepositories();
 
 var app = builder.Build();
 
@@ -40,19 +47,45 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 
-RouteGroupBuilder api = app.MapGroup("/api/v1");
-api.MapPost("/subscription/checkout-url", CheckoutUrl);
+RouteGroupBuilder link = app.MapGroup("/link");
+link.MapGet("/subscription/checkout-url", CheckoutUrl);
 
 app.Run();
 
-static async Task<IResult> CheckoutUrl([FromQuery(Name = "t_id")] Guid? tenantId)
+
+static async Task<IResult> CheckoutUrl(
+    [FromQuery(Name = "t_id")] Guid? tenantId,
+    [FromQuery(Name = "customer")] string? customer,
+    [FromQuery(Name = "plan_id")] string? planId,
+    //SERVICES
+    [FromServices] ITenantRepository tenantRepository,
+    [FromServices] ISubscriptionService subscriptionService)
 {
+
     if (!tenantId.HasValue)
     {
-        return TypedResults.BadRequest();
+        return Results.Redirect("/error");
     }
 
-    return TypedResults.Ok(new { tId = tenantId });
+    var tenant = (await tenantRepository.Find(doc => doc.TenantId == tenantId)).FirstOrDefault();
+
+    if (tenant == null)
+    {
+        return Results.Redirect("/error");
+    }
+
+    var subscriptionLink = await subscriptionService.GetCheckoutUrl(new OneInteg.Server.DataAccess.Customer
+    {
+        TenantId = tenant.TenantId,
+        Email = Encoding.UTF8.GetString(Convert.FromBase64String(customer))
+    }, planId);
+
+    if (string.IsNullOrEmpty(subscriptionLink))
+    {
+        return Results.Redirect("/error");
+    }
+
+    return Results.Redirect(subscriptionLink);
 }
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

@@ -1,8 +1,8 @@
-﻿using OneInteg.Server.Domain.Entities;
+﻿using OneInteg.Server.DataAccess;
 
 namespace OneInteg.Server.Domain.Repositories
 {
-    public interface ITenantRepository
+    public interface ITenantRepository : IBaseRepository<Tenant>
     {
     }
 }

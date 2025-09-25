@@ -1,9 +1,11 @@
-﻿using OneInteg.Server.Domain.Entities;
+﻿
+
+using OneInteg.Server.DataAccess;
 
 namespace OneInteg.Server.Domain.Services
 {
     public interface ISubscriptionService : IBaseService<Subscription>
     {
-        Task<string> GetCheckoutUrl(Tenant tenant, Customer customer, string planReference);
+        Task<string> GetCheckoutUrl(Customer customer, string planReference);
     }
 }

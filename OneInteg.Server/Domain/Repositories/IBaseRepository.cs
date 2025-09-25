@@ -2,7 +2,7 @@
 
 namespace OneInteg.Server.Domain.Repositories
 {
-    public interface IBaseRepository<T> where T : class
+    public interface IBaseRepository<T> : IDisposable
     {
         Task<T> Add(T entity);
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);

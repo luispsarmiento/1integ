@@ -35,6 +35,11 @@ namespace OneInteg.Server.DataAccess
             await _context.SaveChangesAsync();
         }
 
+        public void Dispose()
+        {
+            this._context.Dispose();
+        }
+
         public virtual async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
         {
             return await _context.Set<T>().Where(predicate).ToListAsync();
