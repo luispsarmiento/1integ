@@ -30,5 +30,20 @@ namespace OneInteg.Server.IoCConfig
 
             services.AddScoped<ISubscriptionService, SubscriptionService>();
         }
+
+        public static void AddPaymentProviders(this IServiceCollection services) 
+        {
+            services.AddScoped<IPaymentProvider, MercadoPagoPaymentProvider>(s =>
+            {
+                var baseUri = Environment.GetEnvironmentVariable("MERCADO_PAGO_URI");
+                var accessToken = Environment.GetEnvironmentVariable("MERCADO_PAGO_ACCESS_TOKEN");
+
+                return new MercadoPagoPaymentProvider(
+                    s.GetRequiredService<ICustomerRepository>(), 
+                    s.GetRequiredService<ISubscriptionRepository>(), 
+                    baseUri, 
+                    accessToken);
+            });
+        }
     }
 }
