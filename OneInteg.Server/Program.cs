@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using OneInteg.Server.Domain.Repositories;
@@ -22,6 +23,8 @@ builder.Services.AddCustomMongoDbService();
 
 builder.Services.AddServiceAndRepositories();
 builder.Services.AddPaymentProviders();
+
+builder.Services.AddHttpClient();
 
 builder.Services.AddSession(options =>
 {
@@ -103,19 +106,45 @@ static async Task<IResult> CheckoutUrl(
 static async Task<IResult> BackUrlSubscriptionMP(
     HttpContext contex, 
     [FromRoute(Name = "t_id")] Guid tenantId, 
-    [FromServices] IPaymentProvider paymentProvider)
+    [FromServices] IPaymentProvider paymentProvider,
+    [FromServices] ITenantRepository tenantRepository,
+    [FromServices] IHttpClientFactory httpClientFactory)
 {
     Console.WriteLine(contex.Session.GetString("ce"));
     var queryParams = contex.Request.Query;
     var preapprolvaId = queryParams["preapproval_id"];
-    Console.WriteLine("Preapproval_id: ", preapprolvaId);
+    Console.WriteLine("Preapproval_id: {0}", preapprolvaId);
 
     if (string.IsNullOrEmpty(preapprolvaId))
     {
         return TypedResults.BadRequest();
     }
 
-    await paymentProvider.HandleBackUrlSubscription(tenantId, preapprolvaId, Encoding.UTF8.GetString(Convert.FromBase64String(contex.Session.GetString("ce"))));
+    var customerEmail = Encoding.UTF8.GetString(
+        Convert.FromBase64String(contex.Session.GetString("ce")));
+
+    var subscription = await paymentProvider.HandleBackUrlSubscription(tenantId, preapprolvaId, customerEmail);
+
+    var tenant = tenantRepository.Find(t => t.TenantId == tenantId).Result.First();
+
+    if (!string.IsNullOrEmpty(tenant.Settings.WebhookUrl))
+    {
+        using var client = httpClientFactory.CreateClient();
+
+        var data = new
+        {
+            UserEmail = customerEmail,
+            PlanReference = subscription.PlanReference,
+            SubscriptionReference = subscription.Reference
+        };
+
+        await client.PostAsJsonAsync(tenant.Settings.WebhookUrl, data);
+    }
+
+    if (!string.IsNullOrEmpty(tenant.Settings.BackUrl))
+    {
+        return Results.Redirect(tenant.Settings.BackUrl);
+    }
 
     return TypedResults.Ok();
 }

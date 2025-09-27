@@ -16,6 +16,7 @@ namespace OneInteg.Server.DataAccess
         [BsonRepresentation(BsonType.String)]
         public Guid TenantId { get; set; }
         public string Name { get ; set ; }
+        public TenantSettings Settings { get; set; }
         public DateTime UpdateAt { get ; set ; }
         public DateTime CreateAt { get ; set ; }
     }
