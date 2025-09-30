@@ -65,6 +65,9 @@ namespace OneInteg.Server.Services
                 PaymentMethodId = _response.payment_method_id,
                 Reference = preapprovalId,
                 PlanReference = _response.preapproval_plan_id,
+                StartDate = _response.auto_recurring.start_date,
+                EndDate = _response.auto_recurring.end_date,
+                NextPaymentDate = _response.next_payment_date,
                 CreateAt = DateTime.Now,
                 UpdateAt = DateTime.Now,
             };
@@ -77,6 +80,9 @@ namespace OneInteg.Server.Services
                 PaymentMethodId = subscription.PaymentMethodId,
                 Reference = subscription.Reference,
                 PlanReference = subscription.PlanReference,
+                StartDate = subscription.StartDate,
+                EndDate = subscription.EndDate,
+                NextPaymentDate = subscription.NextPaymentDate,
                 CreateAt = subscription.CreateAt,
                 UpdateAt = subscription.UpdateAt
             });
@@ -90,6 +96,14 @@ namespace OneInteg.Server.Services
         public string payer_id { get; set; }
         public string payment_method_id { get; set; }
         public string preapproval_plan_id { get; set; }
+        public PreapprovalPeriodResponse auto_recurring { get; set; }
+        public DateTime next_payment_date { get; set; }
+    }
+
+    class PreapprovalPeriodResponse
+    {
+        public DateTime start_date { get; set; }
+        public DateTime end_date { get; set; }
     }
 
     class CustomerResponse

@@ -43,6 +43,9 @@ namespace OneInteg.Server.DataAccess
         public string PaymentMethodId { get; set; }
         public string Reference { get; set; }
         public string PlanReference { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public DateTime NextPaymentDate { get; set; }
         public DateTime UpdateAt { get; set; }
         public DateTime CreateAt { get; set; }
     }

@@ -134,8 +134,14 @@ static async Task<IResult> BackUrlSubscriptionMP(
         var data = new
         {
             UserEmail = customerEmail,
-            PlanReference = subscription.PlanReference,
-            SubscriptionReference = subscription.Reference
+            subscription.PlanReference,
+            SubscriptionReference = subscription.Reference,
+            Period = new
+            {
+                subscription.StartDate,
+                subscription.EndDate,
+                subscription.NextPaymentDate
+            }
         };
 
         await client.PostAsJsonAsync(tenant.Settings.WebhookUrl, data);
