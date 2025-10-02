@@ -131,6 +131,8 @@ static async Task<IResult> BackUrlSubscriptionMP(
     {
         using var client = httpClientFactory.CreateClient();
 
+        client.DefaultRequestHeaders.Add("x-api-key", tenant.Settings.WebhookSecretKey);
+        
         var data = new
         {
             UserEmail = customerEmail,
