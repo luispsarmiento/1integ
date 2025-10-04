@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="tailwind.config.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.18" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.18" PrivateAssets="all" />
   </ItemGroup>
@@ -15,4 +19,15 @@
     <ProjectReference Include="..\OneInteg.Shared\OneInteg.Shared.csproj" />
   </ItemGroup>
 
+	<Target Name="Tailwind" BeforeTargets="Compile">
+		<Exec Command="npx tailwindcss -i ./wwwroot/css/app.css -o ./wwwroot/css/style.css" />
+	</Target>
+
+	<Target Name="TailwindDebug" BeforeTargets="Compile" Condition="'$(Configuration)' == 'Debug'">
+		<Exec Command="npx tailwindcss -i ./wwwroot/css/app.css -o ./wwwroot/css/style.css --watch" />
+	</Target>
+
+	<Target Name="TailwindRelease" BeforeTargets="Compile" Condition="'$(Configuration)' == 'Release'">
+		<Exec Command="npx tailwindcss -i ./wwwroot/css/app.css -o ./wwwroot/css/style.css --minify" />
+	</Target>
 </Project>
