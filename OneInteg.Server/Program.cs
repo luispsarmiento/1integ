@@ -85,7 +85,7 @@ static async Task<IResult> CheckoutUrl(
 
     if (tenant == null)
     {
-        return Results.Redirect("/error");
+        return Results.Redirect("/not-found");
     }
 
     contex.Session.SetString("ce", customer);
@@ -97,7 +97,7 @@ static async Task<IResult> CheckoutUrl(
 
     if (string.IsNullOrEmpty(subscriptionLink))
     {
-        return Results.Redirect("/error");
+        return Results.Redirect("/not-found");
     }
 
     return Results.Redirect(subscriptionLink);
@@ -154,7 +154,7 @@ static async Task<IResult> BackUrlSubscriptionMP(
         return Results.Redirect(tenant.Settings.BackUrl);
     }
 
-    return TypedResults.Ok();
+    return Results.Redirect("/subscription-started");
 }
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
