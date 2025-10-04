@@ -53,3 +53,5 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 /.vs
+/OneInteg.Client/wwwroot/node_modules
+/OneInteg.Client/node_modules
