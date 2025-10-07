@@ -146,7 +146,10 @@ static async Task<IResult> BackUrlSubscriptionMP(
             }
         };
 
-        await client.PostAsJsonAsync(tenant.Settings.WebhookUrl, data);
+        await client.PostAsJsonAsync(tenant.Settings.WebhookUrl, data, new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+        });
     }
 
     if (!string.IsNullOrEmpty(tenant.Settings.BackUrl))
